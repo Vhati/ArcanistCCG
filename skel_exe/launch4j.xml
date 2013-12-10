@@ -1,0 +1,27 @@
+<!-- Paths are relative to this xml file -->
+<launch4jConfig>
+  <dontWrapJar>true</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>./ArcanistCCG.jar</jar>
+  <outfile>.\ArcanistCCG.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>false</customProcName>
+  <stayAlive>false</stayAlive>
+  <manifest>normal.manifest</manifest>
+  <icon>.\ArcanistCCG.ico</icon>
+  <classPath>
+    <mainClass>org.arcanist.client.ArcanistCCG</mainClass>
+    <cp>./ArcanistCCG.jar</cp>
+  </classPath>
+  <jre>
+    <path></path>
+    <minVersion>1.6.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+  </jre>
+</launch4jConfig>

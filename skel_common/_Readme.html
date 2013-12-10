@@ -1,0 +1,811 @@
+<html>
+<!-- http://lekkimworld.com/2005/08/01/using_javascript_to_generate_table_of_contents_for_a_webpage.html -->
+
+<head>
+  <title>ArcanistCCG - Readme</title>
+  <style type="text/css"><!--
+  body {font-size:100%;}
+  div.doctitle {
+    font-size:170%;
+    font-weight:bold;
+    text-align: center;
+    margin-top: 1em;
+  }
+  div.section-title {
+    font-size:150%;
+    margin-top: 3em;
+  }
+  div.subsection-title {
+    font-size:120%;
+    margin-top: 2em;
+  }
+  span.gui {}
+  div.lined-table {text-align: center;}
+  div.lined-table table {
+    border-color: #000000;
+    border-style: solid;
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin: 0 auto;
+    text-align: left;
+  }
+  div.lined-table table td {
+    border-color: #000000;
+    border-style: solid;
+    border-width: 1px 1px 0 0;
+    margin: 0;
+    padding: 3px;
+  }
+  td.c {
+    text-align: center;
+  }
+  div.center-wrapper {text-align: center;}
+  div.center-body {
+    text-align: left;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  a.plain-anchor {text-decoration: none;color: black;}
+  --></style>
+  <script type="text/javascript" language="JavaScript"><!--
+  function buildNav() {
+    var sectionList = document.createElement("ul");
+      sectionList.style.listStyleType = "none";
+      sectionList.style.paddingLeft = 0;
+      sectionList.style.marginLeft = 6;
+    var subsectionList = null;
+
+    var divTags = document.getElementsByTagName("div");
+    var sectionCount = 0; var subsectionCount = 0;
+    for (var i=0; i < divTags.length; i++) {
+      var divClass = divTags[i].getAttribute("class");
+      if (!divClass) divClass = divTags[i].getAttribute("className");
+
+      if (divClass == "section-title") {
+        subsectionCount = 0;
+        subsectionList = null;
+        divTags[i].insertBefore(document.createTextNode(++sectionCount +"."+ subsectionCount +". "), divTags[i].firstChild);
+        var tmpString = "???";
+        if (typeof divTags[i].textContent != "undefined") tmpString = divTags[i].textContent;
+        else if (typeof divTags[i].innerText != "undefined") tmpString = divTags[i].innerText;
+        var tmpItemTag = document.createElement("li");
+          var tmpBookmarkTag = document.createElement("a");
+            tmpBookmarkTag.appendChild(document.createTextNode(tmpString));
+            tmpBookmarkTag.setAttribute("href", "#"+ divTags[i].id);
+            tmpBookmarkTag.setAttribute("class", "plain-anchor");
+            tmpBookmarkTag.setAttribute("className", "plain-anchor");
+            tmpItemTag.appendChild(tmpBookmarkTag);
+          sectionList.appendChild(tmpItemTag);
+      }
+      else if (divClass == "subsection-title") {
+        if (subsectionList == null) {
+          subsectionList = document.createElement("ul");
+            subsectionList.style.listStyleType = "none";
+            subsectionList.style.paddingLeft = 0;
+            subsectionList.style.marginLeft = 20;
+            sectionList.appendChild(subsectionList);
+        }
+        divTags[i].insertBefore(document.createTextNode(sectionCount +"."+ ++subsectionCount +". "), divTags[i].firstChild);
+        var tmpString = "???";
+        if (typeof divTags[i].textContent != "undefined") tmpString = divTags[i].textContent;
+        else if (typeof divTags[i].innerText != "undefined") tmpString = divTags[i].innerText;
+        var tmpItemTag = document.createElement("li");
+          var tmpBookmarkTag = document.createElement("a");
+            tmpBookmarkTag.appendChild(document.createTextNode(tmpString));
+            tmpBookmarkTag.setAttribute("href", "#"+ divTags[i].id);
+            tmpBookmarkTag.setAttribute("class", "plain-anchor");
+            tmpBookmarkTag.setAttribute("className", "plain-anchor");
+            tmpItemTag.appendChild(tmpBookmarkTag);
+          subsectionList.appendChild(tmpItemTag);
+      }
+    }
+    var navDiv = document.getElementById("nav");
+      navDiv.style.display = "block";
+      navDiv.appendChild(document.createTextNode("Bookmarks"));
+      navDiv.appendChild(sectionList);
+      navDiv.appendChild(document.createElement("br"));
+    var articleDiv = document.getElementById("article");
+      articleDiv.style.height = "100%";
+      articleDiv.style.overflow = "auto";
+
+    if (typeof document.body.scroll != "undefined") {  // IE
+      document.body.style.margin = 0;
+      document.body.scroll = "no";
+      //document.body.style.overflow = "hidden";
+      //document.getElementsByTagName('html')[0].style.overflow = 'hidden';
+    }
+    else {
+      document.body.style.margin = 0;
+      document.body.style.overflow = "auto";
+    }
+    document.getElementById("article-pad").style.padding = 10;
+
+    if (window.location.href.indexOf("#") != -1) {
+      window.location.href = "#"+ location.href.split("#")[1];
+    }
+  }
+  --></script>
+</head>
+
+<body onload="buildNav();">
+  <div id="nav" style="display:none;float:left;width:230;height:100%;overflow:scroll;white-space:nowrap;"></div>
+
+
+  <div id="article"><div id="article-pad">
+  <div class="doctitle">ArcanistCCG 4.5 Readme</div>
+
+  <div class="section-title" id="introduction">Introduction</div>
+  <p>ArcanistCCG is a virtual table to play any card game online. Like a real table, it won't enforce the rules, but it will let you do most of the crazy stuff CCGs may include: die rolling, tokens, deck manipulation, card rotation, notes, etc.</p>
+  <p>ArcanistFamiliar is a helper app that automates installation and downloads new expansions.</p>
+  <p>ArcanistSDK is a another app, for developers, to convert among various tables' formats.</p>
+
+
+  <div class="section-title" id="objects-on-the-table">Objects on the Table</div>
+  <p>The table itself is a scrollable surface of fixed dimensions. It can be resized indefinitely to add more empty space at the borders.</p>
+  <p>Objects added to the table initially appear at the top-left of a player's view.</p>
+  <p>An orange lock icon sometimes appears on objects that are unresponsive because they are in use.</p>
+
+  <div class="subsection-title" id="cards">Cards</div>
+  <div class="center-wrapper"><img src="./images/readme/Card.png" /></div>
+  <p>There are four hotspots at the corners. Dragging any of them north, south, east, or west will rotate the card.</p>
+  <p>One of ArcanistCCG's idiosyncracies is the concept of local and remote flipping (via context menu when playing online). A card on the table can have its face visible to you but no one else, as if holding it in hand. When game rules would have you play the card, drag it from one arbitrary part of the table to another, then Remote Flip it to show the face to opponents. A Local Flip peeks or unpeeks at an otherwise facedown card. A regular Flip inverts its facing for everybody.</p>
+  <p><b>Tip:</b> Screen real estate can be saved by using a layout of partially overlapping cards. There's no need to place them edge-to-edge if you're only paying attention to the art-half.</p>
+
+  <div class="subsection-title" id="decks">Decks</div>
+  <div class="center-wrapper"><img src="./images/readme/Deck.png" /></div>
+  <p>To draw a card, click. It will appear on the table (below by default). When clicking to draw from a facedown deck with AutoFace enabled (default), the new card will be locally flipped automatically (shift-clicking will suppress this so the drawn card will be facedown for you like for everyone else).</p>
+  <p>When AddToBottom is enabled, cards, other decks, and hand contents dragged onto the deck will be added to the bottom (shift dragging onto the deck will also have this effect).</p>
+  <p>Position Lock will prevent any accidental dragging.</p>
+  <p>Changing a deck between faceup and facedown does not by itself reverse the cards' order.</p>
+  <p><b>Tip:</b> To manage a card that "contains" others, like a vehicle or out-of-game escrow, drag a deck <i>under</i> the card (since the card wasn't dragged, it won't be part of the deck). Then create a group to reposition them as necessary.</p>
+
+  <div class="subsection-title" id="tokens">Tokens</div>
+  <div class="center-wrapper"><img src="./images/readme/Token.png" /></div>
+  <p>There's not much to tokens. They resemble glass beads that can be dragged around.</p>
+
+  <div class="subsection-title" id="floatingnotes">FloatingNotes</div>
+  <div class="center-wrapper"><img src="./images/readme/FloatingNote.png" /></div>
+  <p>FloatingNotes are text labels that drag like everything else. Click to edit; then press enter or click elsewhere to commit the change.</p>
+
+  <div class="subsection-title" id="hands">Hands</div>
+  <div class="center-wrapper"><img src="./images/readme/Hand.png" /></div>
+  <p>A hand is a scrollable, stretchable list for organizing large numbers of cards opponents should rarely see. Hands are not always necessity, since a locally flipped pile of loose cards may suffice.</p>
+  <p>To fill a hand, drag cards or decks into it. Dragging within the hand reorders it. Cards dragged out of a hand, onto the table are automatically made faceup to everyone (shift-drag for facedown).</p>
+  <p>Initially a hand is locally revealed only for the player who created it. In the top-right corner, there's a total card count. The title bar is right-clickable for a context menu. Enabling Hover causes the hand to maintain its apparent position when scrolling the table.</p>
+  <p><span class="gui">"..."</span> switches to settings, where reticles can be dragged onto decks to enable Draw/Discard, which directly transfer cards between those decks and the hand.</p>
+
+  <div class="subsection-title" id="groups">Groups</div>
+  <p>Group objects are a convenience to perform a single action repeatedly and are unseen by opponents. To create a group, shift-drag across an area from an empty point on the table. Any other object whose top-left corner is within that area is affected when you later drag or right-click the group.</p>
+  <p>Typical uses include scooting several cards over, mass-rotating, or moving a card with an entourage of tokens/labels/cards piled on it. One overlooked feature is count. The Drag Filter is a whitelist to determine which objects move when dragging.</p>
+  <p><b>Tip:</b> Shift-dragging in the MiniMap creates groups too.</p>
+
+
+  <div class="section-title" id="other-windows">Other Windows</div>
+
+  <div class="subsection-title" id="jumboview">JumboView</div>
+  <p>As the mouse moves over a card or faceup deck on the table, the JumboView displays the full-size image or text of the card. Right-clicking on the Jumbo tab will set which of those is preferred. Holding shift as the mouse moves will temporarily switch the image/text preference.</p>
+  <p>While an image is displayed, extra buttons appear, to scale and rotate it.</p>
+  <p>When text is displayed, you can drag-select to see words that run beyond the end of a field.</p>
+
+  <div class="subsection-title" id="chat">Chat</div>
+  <p>The bulk of player interaction takes place here, announcing moves. Additionally color coded notices will be logged here; urgent ones will change the chat tab's color.</p>
+  <p>Right-clicking the chat tab will save the log, clear the log, print all Counter windows' values in the log, temporarily set your alias, or undock the chat. When undocked, closing the chat window will redock it with the log intact.</p>
+
+  <div class="subsection-title" id="minimap">MiniMap</div>
+  <p>Like in an RTS, the MiniMap has a scaled overview of the entire table. Clicking or dragging the red view rectangle will scroll the table.</p>
+
+  <div class="subsection-title" id="counter">Counter</div>
+  <div class="center-wrapper"><img src="./images/readme/Counter.png" /></div>
+  <p>A labelled number that increments/decrements. Value changes are logged in the chat.</p>
+
+  <div class="subsection-title" id="dieroller">DieRoller</div>
+  <div class="center-wrapper"><img src="./images/readme/DieRoller.png" /></div>
+  <p>Set a number of dice and sides, then roll. Results are logged in the chat when the window loses focus.</p>
+
+  <div class="subsection-title" id="timer">Timer</div>
+  <div class="center-wrapper"><img src="./images/readme/Timer.png" /></div>
+  <p>Click <span class="gui">"&gt;/II"</span> to start/pause ticking. <span class="gui">"Rst"</span> stops and resets.</p>
+  <p><span class="gui">"..."</span> switches to settings, where an initial time can be set to count down from. When a countdown finishes, the chat is notified. By default, the initial time is 00:00:00, so the timer counts up indefinitely.</p>
+
+  <div class="subsection-title" id="deck-search">Deck-Search</div>
+  <div class="center-wrapper"><img src="./images/readme/DeckSearch.png" /></div>
+  <p>At the top are fields that search exactly like in the DeckBuilder. Below is the entirety or a filtered subset of the deck's contents, in either stack or alphabetical order.</p>
+  <p>Once one or more cards are selected, Remove removes them from existence, NewDeck removes them, then adds a new deck with identical cards to the table. Draw puts them on the table (honoring the deck's settings as if drawn normally).</p>
+
+  <div class="subsection-title" id="deck-list">Deck-List</div>
+  <div class="center-wrapper"><img src="./images/readme/DeckList.png" /></div>
+  <p>A way to visually inspect all or part of a deck. Thumbnails are laid out wrapped 10 to a row, side-by-side from top to bottom and can be clicked to draw.</p>
+  <p>Unlike the search window, here you can preemptively restrict the view to only see X cards from the top or bottom.</p>
+
+  <div class="subsection-title" id="lobby">Lobby</div>
+  <div class="center-wrapper"><img src="./images/readme/Lobby.png" /></div>
+  <p>This window appears when acting as a NetPlay server. The server starts listening for new players immediately. The button in the upper-right can stop or resume listening.</p>
+  <p>Individual players can be selected and kicked out. If you kick yourself (or <span class="gui">"KickAll"</span>), the server stops, and you're back to playing solo.</p>
+
+  <div class="subsection-title" id="settings-appearance">Settings-Appearance</div>
+  <div class="center-wrapper"><img src="./images/readme/Settings-Appearance.png" /></div>
+  <p>Local cosmetic settings like colors, background, and grid snapping are found here. The player alias and window layout, if saved, will be remembered after exiting.</p>
+  <p>To revert to defaults, delete appearance.xml.</p>
+
+  <div class="subsection-title" id="settings-keyboard">Settings-Keyboard</div>
+  <div class="center-wrapper"><img src="./images/readme/Settings-Keyboard.png" /></div>
+  <p>User-customizable keyboard shortcuts are listed for various objects and windows, alongside up to two fields. The first determines the hotkey itself: click the field and press keys to set one. The second, if present, is a string argument for the shortcut (e.g., stock phrases for chat macros).</p>
+
+  <div class="subsection-title" id="settings-paths">Settings-Paths</div>
+  <div class="center-wrapper"><img src="./images/readme/Settings-Paths.png" /></div>
+  <p>This dialog edits per-game settings, like where images and spoilers are expected, and how the JumboView should display text.</p>
+  <p><b>Tip:</b> Bringing up this dialog and immediately clicking Apply reparses the spoiler and scans for added images. Faster than restarting ArcanistCCG.</p>
+
+
+  <div class="section-title" id="deck-construction">Deck Construction</div>
+  <div class="center-wrapper"><img src="./images/readme/DeckBuilder.png" /></div>
+  <p>Top: Searchable fields. Left: Available cards. Right: Reprints of a selected card. Bottom: Deck contents.</p>
+
+  <div class="subsection-title" id="finding-cards">Finding Cards</div>
+  <p>To skip through the cardlist, click it and type a letter. One can quickly browse the card list using the cursor keys (up: prev, down: next, left: pic, right: text).</p>
+  <p>The Basic search uses keywords like:</p>
+  <blockquote><p>squirrel -nuts "climbs a tree" -"falls out"</p></blockquote>
+  <p>They're simply words and quoted phrases with leading minus for negation. To search for a minus enclose it in quotes.</p>
+  <p>Regex searches are available by clicking the small buttons next to fields. (Advanced users only) Regular expressions only match if they match the entire string, so it is usuallly necessary to wrap a regex with ".*" wildcards. One simple application of regex is to find blank fields, which basic keywords won't do: "$" (a lone dollar sign) which represents the end of a line.</p>
+  <p>Sometimes there will be a row of buttons (<span class="gui">"XLAGRBUW"</span>) in place of a field. Those are for Apprentice colors. The leftmost one (<span class="gui">"X"</span>) is special. Alone, it shows multicolor cards. When others are also pressed, it only shows that combination of colors.</p>
+  <p>Once you've filled out the fields, hit enter or click Filter to search. Select a card from the left, a reprint from the right, and click add. Adding repeatedly will increment the number of card's copies in the deck below. Remove will remove ALL copies (incentive to think before you click).</p>
+
+  <div class="subsection-title" id="deck-contents">Deck Contents</div>
+  <p>For each card in a deck, there will be a line like one of the following:</p>
+  <div class="lined-table"><table>
+    <thead>
+      <tr><td>Amount</td><td>Name</td><td>Set</td><td>FrontFile</td><td>BackName</td><td>BackFile</td></tr>
+    </thead>
+    <tbody>
+      <tr><td class="c">3</td><td>Benevolent Dolphin</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td class="c">3</td><td>Benevolent Dolphin</td><td>NewWave</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td class="c">3</td><td>Benevolent Dolphin</td><td>NewWave</td><td>Benevolent Dolphin 2.jpg</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td class="c">3</td><td>Benevolent Dolphin</td><td>NewWave</td><td>Benevolent Dolphin 2.jpg</td><td>Evil Dolphin</td><td>Evil Dolphin 2.jpg</td></tr>
+    </tbody>
+  </table></div>
+  <p>A deck can get by with only the Amount and Name rows. Including Set and FrontFile info will speed up loading and ensure all players see the same version of the card. On the other hand, leaving them blank lets players use their most recent reprint image.</p>
+  <p>The last two fields are rarely used. They replace the default back image with the face of another card. For double-sided cards, Set, BackName, and optionally BackFile need to be filled in manually. Alternatively it may be preferable to add the second face as a separate card, in a sideboard to swap in during play.</p>
+  <p>The DeckBuilder does nearly all the work for you. In addition, these rows are valid.</p>
+  <div class="lined-table"><table>
+    <thead>
+      <tr><td>First Column</td><td>Second Column</td><td>Action</td></tr>
+    </thead>
+    <tbody>
+      <tr><td class="c">//</td><td><i>text</i></td><td>Comment</td></tr>
+      <tr><td class="c">;</td><td><i>text label</i></td><td>NestedDeck</td></tr>
+      <tr><td class="c">&gt;</td><td><i>path from gamedir</i></td><td>Override default back image</td></tr>
+      <tr><td class="c">&lt;</td><td>&nbsp;</td><td>Revert to default back image</td></tr>
+    </tbody>
+  </table></div>
+  <p>Press the skinny blank button to add a blank line and use them. Editing to a cell in the deck table isn't finalized until it loses focus.</p>
+  <p>Nested decks are useful for sideboards and organizing card types to monitor legality. Hovering over the total card count will reveal a tooltip listing each nested deck's count.</p>
+
+  <div class="subsection-title" id="importing-and-exporting">Importing and Exporting</div>
+  <p>Apprentice decks (text but not binary) can be imported/exported. Any nested decks will be exported as a single combined sideboard.</p>
+  <p>LackeyCCG decks can be imported.</p>
+
+
+  <div class="section-title" id="playing-against-an-opponent">Playing Against an Opponent</div>
+  <p>There is no central matchmaking server to find people. However, games' community forums tend to have a section for players to announce their Instant Messenger names.</p>
+  <p>The first player goes to Files-NetPlay, switches to the Server tab, and clicks Ok to listen on a port. Often this person's router will need port forwarding configured to allow incoming traffic. Then this player visits <a href="http://www.whatismyip.com/">http://www.whatismyip.com/</a> and tells the address to his opponent over IM.</p>
+  <p>The second player goes to Files-NetPlay, fills in the IP, and clicks Ok. If this fails, try switching who serves and who connects. Or see the Hamachi section.</p>
+
+  <div class="subsection-title" id="hamachi-vpn">Hamachi VPN</div>
+  <p>Hamachi bypasses router issues by creating a fake network adapter, complete with its own IP, on a virtual LAN that will populate as players sign into Hamachi accounts. Once installed, you can use that address to connect to each other.</p>
+  <p>You can get it <a href="https://secure.logmein.com/products/hamachi/download.aspx">here</a>.</p>
+
+
+  <div class="section-title" id="adding-new-games">Developers: Adding New Games</div>
+  <p>This section is mostly for satisfying users' curiosity, since I handle all the games' development myself.</p>
+
+  <div class="subsection-title" id="directory-tree">Directory Tree</div>
+  <div>
+    <pre>ArcanistCCG/
+ |-cards/
+    |-MyName/
+    |  |-FirstExpansion/
+    |  |  |-A Card's Name.jpg
+    |  |  |-Another Card.jpg
+    |  |  |-Alt-Art Beast 1.jpg
+    |  |  |-Alt-Art Beast 2.jpg
+    |  |  |-Alt-Art Beast 3.jpg
+    |  |  |-Fred.jpg
+    |  |-SomeOtherExpansion/
+    |  |-YouGetTheIdea/
+    |  |-Back_MyGame.jpg
+    |  |-Expan.dat
+    |  |-MyGame_dat.txt
+    |-SomeOtherGame/
+    |-YetAnotherName/
+...</pre>
+  </div>
+  <p>Each game gets its own directory within ArcanisCCG/cards/. Within it, expansions each get dirs of images. The game dir also contains an image of the back of a card and text data files (see Expansion File and Spoiler File).</p>
+  <p>Game names and expansion names, by convention, lack punctuation, lack spaces, and capitalize each word.</p>
+  <p>Card image names are normal: letters, numbers, hyphens, apostrophes, commas, periods, and spaces. Drop any trailing elipses. If multiple cards within an expansion have the same name (e.g., alternate art), append a space and number before the obligatory image suffix (.jpg, .gif, etc).</p>
+
+  <div class="subsection-title" id="expansion-file">Expansion File</div>
+  <p>Expan.dat is a plain text file (non-unicode, with CR-LF line endings), which can be made with any text editor. Each line consists of an expansion's abbreviation (see Spoiler File), a hyphen, and the expansion's full name (matching its folder in the Directory Tree). For example: "ABBR-FullSetName".</p>
+  <p>Abbreviations must be unique (ignoring case), so using 3 characters is a better choice than two.</p>
+  <p>Full expansion names, by convention, lack punctuation, lack spaces, and capitalize each word.</p>
+
+  <div class="subsection-title" id="spoiler-file">Spoiler File</div>
+  <p>The spoiler file is either in the binary Apprentice format (cardinfo.dat) or in the plain text ArcanistCCG format (MyGame_dat.txt). For now, I'll be describing the latter.</p>
+  <p>At the start is a header block of N field names, followed by a blank line. The first must be "Name". One must be "Set". The rest are up to you. Every card that follows must be describable by those N fields; if need be, you can make up conventions to squeeze information into a multi-purpose field.</p>
+  <div class="lined-table"><table>
+    <thead>
+      <tr><td>Field</td><td>Potential card info</td></tr>
+    </thead>
+    <tbody>
+      <tr><td>Type</td><td>"Type - Subtype Subtype ; More"</td></tr>
+      <tr><td>Stats</td><td>"1F" or "3S" or "3F/4S/8T"</td></tr>
+      <tr><td>Text</td><td>"Bold Word - Bold Word - Bold Word\n\nNormal card text"</td></tr>
+      <tr><td>Flavor</td><td>"Blah Blah\n\n{Legal:Gold}{Legal:8ed}{Legal:4ed}"</td></tr>
+    </tbody>
+  </table></div>
+  <p>ArcanistCCG maps the "Name" field directly to image names, so stick to characters that are friendly to filesystems. An image is considered to belong to a card if the spoiler name, plus an optional space, plus an optional number, plus an image extension matches its file name. "Fred" will match "Fred 1.jpg", "Fred1.gif", and "Fred.png".</p>
+  <p>The "Set" field maps to expansion subdirectories that contain those images ("MyGame/FirstExpansion/Fred.jpg"). Each card later on will have a comma-separated list of abbreviations (each of those with an optional hyphen then arbitrary chars for rarity).</p>
+  <p>After the N field names and a blank line, come the cards. Each card is comprised of N lines of info followed by a blank. If a card has no info for a field, leave the line blank but it must be there. The spoiler must be a multiple of N lines (check from time to time during data entry to notice typos).</p>
+  <p>Only minimal interpretation is applied to card info: "\n" is a line break. The rest of the markup is at your discretion. For search convenience, surround symbols with chars that stand out from sentences: "{ICON}" or "{Multiplier:4}".</p>
+  <p><b>Tip:</b> If you have ArcanistCCG running while you change the spoiler in a text editor, you can tell Arcanist to reload the spoiler by clicking the Settings menu, Paths, then the Apply button.</p>
+  <p>The DeckBuilder's menu offers spoiler editing in-GUI, but it's intended for one-off typo correcting. Changes aren't permanent until the spoiler is saved. To remove a card, select a name from the left, a reprint from the right, and click Delete from the menu. When attempting to add a new card, if there's already a reprint from the new card's set, or if the new card's set isn't valid, the attempt will be cancelled. For mass additions, stick to a text editor.</p>
+
+  <div class="subsection-title" id="apprentice-format">Apprentice Format</div>
+  <p>To make a binary dat compatible with both ArcanistCCG and Apprentice, create a text file as above, but with the following restrictions.</p>
+  <p>Exactly 8 fields: Name, Color, Rarity, Set, Type, Cost, Stats, Text, Flavor.</p>
+  <p>Color is one of the following, based on Magic: 1 White, 2 Blue, 4 Black, 8 Red, 16 Green, 64 Tan, 128 Land; or 32 Gold/Multi plus a combination of zero or more colors.</p>
+  <p>For the Cost field, Apprentice will replace the letters WUBRG with color symbols. When ArcanistCCG uses a binary Apprentice dat, it will provide a row of color buttons in the deckbuilder.</p>
+  <p>When done, use ArcanistSDK (a separate app) to convert the text into the final binary cardinfo.dat. Expan.dat needs no modification.</p>
+  <p>Apprentice users copy the spoiler and expansion data files to locations seen below.</p>
+  <div>
+    <pre>Apprentice/
+  |-Sets/
+  |   |-cardinfo.dat
+  |-Expan.dat</pre>
+  </div>
+
+  <div class="subsection-title" id="jumbo-text-layout">Jumbo Text Layout</div>
+  <p>...</p>
+
+
+  <div class="section-title" id="changelog">Changelog</div>
+  <ul>
+    <li>4.5</li>
+    <ul>
+      <li>New in 4.50</li>
+      <ul>
+        <li>The code has been refactored to use Java 1.6 conventions and is built with Maven.</li>
+      </ul>
+      <li>Fixed in 4.50</li>
+      <ul>
+        <li>In the DeckBuilder, the reprint tree showed extraneous text sets when abbreviations overlapped (DKA cards also had DK listed).</li>
+      </ul>
+    </ul>
+
+    <li>4.00</li>
+    <ul>
+      <li>New in 4.00</li>
+      <ul>
+        <li>Better documentation.</li>
+        <li>Hand objects! Cards and decks can be dragged into them.</li>
+        <li>Clicking in the MiniMap jumps to a table location without dragging.</li>
+        <li>Shift-dragging in the MiniMap creates a Group.</li>
+        <li>The JumboView's image/text preference for mouseovers can be briefly switched by holding shift.</li>
+        <li>Countdown timers identify their owner/time in the chat.</li>
+        <li>DieRollers report report individual dice to the chat log.</li>
+        <li>The chat window has optional timestamps and colored notices.</li>
+        <li>The chat window's can save its contents (right-click the tab).</li>
+        <li>The chat window can list all players' Counters (right-click the tab).</li>
+        <li>The chat window can have hotkey-triggered macros.</li>
+        <li>Hotkey to switch focus from the table to the chat window: Enter.</li>
+        <li>Hotkeys for card rotation: O/P.</li>
+        <li>Hotkey for card remote flipping: L.</li>
+        <li>Hotkeys can be customized.</li>
+        <li>Cards' overlaid text includes stats, for some games (Settings-TextOnCards).</li>
+        <li>Appearance settings can be applied without saving.</li>
+        <li>A player's alias can be saved (Settings-Appearance...).</li>
+        <li>Significant memory usage improvements from a new image caching method.</li>
+        <li>Deck List windows' thumbnail generation is significantly improved.</li>
+        <li>In the DeckBuilder, clicking on the deck contents will show the selected card's pic.</li>
+        <li>In the DeckBuilder, the reprint tree colors in-expan.dat-but-textless sets blue.</li>
+        <li>In the DeckBuilder, the reprint tree autoselects the latest image that has text for its set.</li>
+        <li>Deck Search/DeckBulder fields include a combobox for expansions.</li>
+        <li>Deck files with lines that do not specify an expansion are interpreted to mean the latest reprint with an image.</li>
+        <li>When a deck file mentions a specific filename that does not exist, several guessed names are tried before failing over to text-only (e.g., gif players vs jpg players).</li>
+        <li>Table size defaults to 3000x3000 for more room.</li>
+        <li>Game states can be saved.</li>
+        <li>Game states can be resynchronized (File-Send State).</li>
+        <li>Players connecting to a server get their states synced.</li>
+        <li>When loading decks or states, the GUI is nerfed while busy.</li>
+        <li>Players no longer act-and-notify, but send requests to the server and obey it.</li>
+        <li>Busy players' requested actions are dropped by the server.</li>
+        <li>FloatingNotes can be duplicated.</li>
+      </ul>
+      <li>Fixed in 4.00</li>
+      <ul>
+        <li>There was a half-second delay in updating the MiniMap when its tab was revealed.</li>
+        <li>Setting a deck's "Add to Bottom" or "FaceUp" state was not communicated to opponents.</li>
+        <li>Duplicate decks inherited the originals' contents but not settings.</li>
+        <li>On decks, "Toggle Top Visible" was useless and broken and has been removed.</li>
+        <li>Duplicate cards didn't inherit originals' flip state or rotation.</li>
+        <li>Depending on OS, processor, and runtime, maximizing on startup didn't always work.</li>
+        <li>Timers weren't saved as part of the window layout (Settings-Appearance...).</li>
+        <li>Undocked Chat windows weren't saved as part of the window layout (Settings-Appearance...).</li>
+        <li>The chat could send blank lines.</li>
+        <li>Under Java 1.5+, the NetPlay/Disconnect menus items weren't painted properly (sometimes crashing).</li>
+        <li>Under Java 1.5+, File-NetPlay wasn't shown again after a disconnect.</li>
+        <li>Some extra characters were accepted when setting a player's alias.</li>
+        <li>Dragging one deck onto another didn't have a warning.</li>
+        <li>Ctrl-clicking on a Mac to get a deck's context menu also drew.</li>
+        <li>When facedown double-sided cards had name overlays, their front name was shown.</li>
+        <li>Several "Are You Sure" nags' had inconsistent window borders.</li>
+        <li>Groups didn't nag about local-flip peeking at facedown cards.</li>
+        <li>Groups weren't subject to grid snapping.</li>
+        <li>Decks weren't subject to grid snapping.</li>
+        <li>Objects were moving during drags (without opponent notification), rather than on mouse release.</li>
+        <li>FloatingNotes were selecting text when dragging.</li>
+        <li>When dragging to rotate cards from a corner, there was some extraneous rotating.</li>
+        <li>Cards' overlayed text wasn't very legible (Settings-TextOnCards).</li>
+        <li>Facedown cards didn't respond to hotkeys.</li>
+        <li>In the DeckBuilder, the reprint tree listed sets which lacked images, and images within sets, in unsorted order.</li>
+        <li>In the DeckBuilder, the mouse and keyboard shortcuts to show a card's text showed the earliest reprint, ignoring the tree.</li>
+        <li>In the DeckBuilder, in-progress edits to deck table cells weren't cancelled when the table was programmatically altered.</li>
+        <li>DeckBuilder and Deck Search windows weren't notified when a new dat was loaded.</li>
+        <li>In the Deck Search window, the NewDeck button was broken.</li>
+        <li>When editing card text, fields that were normally invisible were not saved.</li>
+        <li>When the table was resized, scrollbars weren't immediately updated.</li>
+        <li>The Settings-Paths window didn't resize when editing text layouts.</li>
+        <li>The old spymac url was still shown after applying preferences for a missing game.</li>
+        <li>Some "Are you sure?" popups assumed "Yes" if closed.</li>
+        <li>Overwrite nags were inconsistently worded.</li>
+        <li>GUI-less users who facetiously attempted to run ArcanistCCG didn't get an error message.</li>
+      </ul>
+    </ul>
+
+    <li>3.08</li>
+    <ul>
+      <li>New in 3.08</li>
+      <ul>
+        <li>A Timer window, which counts up, or down if given a start time.</li>
+        <li>An MD5 hash appears in the chat when loading a deck.</li>
+        <li>Deck List windows can show the top X or bottom X cards.</li>
+        <li>DeckBuilder can import LackeyCCG decks.</li>
+        <li>Left/Right clicking in the DeckBuilder's card list show images/text.</li>
+        <li>Left/Right cursor keys also show images/text.</li>
+        <li>Opponents are notified of card local-flipping to peek.</li>
+        <li>Opponents are notified of deck shuffling, reversing, searching, listing, drawX, drawRandom, toBottom.</li>
+        <li>Groups can highlight a random card within them.</li>
+        <li>Right-clicking the Chat tab in the JumboView sets an alias (aka nick/handle/screenname).</li>
+        <li>Grid snapping has been added to the Appearance settings.</li>
+        <li>Dragging a card onto a deck while holding shift will add it to the bottom.</li>
+        <li>During a game, File-Netplay... is replaced with File-Disconnect.</li>
+      </ul>
+      <li>Fixed in 3.08</li>
+      <ul>
+        <li>Clearing the chat window didn't have a warning.</li>
+        <li>Counters didn't notify opponents when they were renamed.</li>
+        <li>FloatingNotes announced they were unused after they were removed.</li>
+        <li>A double-sided card on top of facedown decks revealed the wrong side in the JumboView.</li>
+        <li>Text-based JumboView clipped a couple pixels from the first letter of fields.</li>
+        <li>In the DeckBuilder, when pressing tab to cycle focus to the table, an error occurred if there were no rows.</li>
+        <li>In the Deck Search window, when pressing tab to cycle focus to the table, an error occurred if there were no rows.</li>
+        <li>Deck List and Deck Search windows weren't removed when the table was cleared.</li>
+        <li>DieRoller and Counter notices could have been forged since they lacked surrounding dashes.</li>
+      </ul>
+    </ul>
+
+    <li>3.07</li>
+    <ul>
+      <li>Fixed in 3.07</li>
+      <ul>
+        <li>Deck Searches would misbehave when re-sorting after Rem/NewDecking/Drawing cards.</li>
+        <li>Saved decks didn't consolidate clumps of identical cards.</li>
+        <li>Decks were unnecessarily locked.</li>
+      </ul>
+    </ul>
+
+    <li>3.06</li>
+    <ul>
+      <li>New in 3.06</li>
+      <ul>
+        <li>The chat is undockable.</li>
+        <li>Clearing the table when starting a networked game is optional (nothing is in place to ensure sync).</li>
+        <li>Decks are searchable.</li>
+        <li>Grouped decks can be saved in a single file as side decks.</li>
+        <li>Moving a card up/down via ;/. keys now moves relative to nearby cards.</li>
+      </ul>
+      <li>Fixed in 3.06</li>
+      <ul>
+        <li>Images were only uncached when changing games or clearing the table; now they're forgotten shortly after cards are removed.</li>
+        <li>The JumboView rotation/scale buttons were visible when using the chat or MiniMap.</li>
+        <li>Group selections weren't removed when the table was cleared.</li>
+        <li>Mac's with 1-button mice couldn't ctrl-click to get popup menus.</li>
+      </ul>
+    </ul>
+
+    <li>3.05</li>
+    <ul>
+      <li>New in 3.05</li>
+      <ul>
+        <li>When ArcanistCCG isn't active, its icon blinks when it wants your attention.</li>
+        <li>Logfile.txt is created when bad things happen.</li>
+        <li>MiniMap added.</li>
+        <li>Groups of cards can be rotated in increments (e.g. everything +90 degrees).</li>
+        <li>Unrecognized dirs under ArcanistCCG/cards/GameName/ (not in Expan.dat) turn red in the DeckBuilder.</li>
+        <li>Cards' reprints are sorted in chronological order in the DeckBuilder (based on Expan.dat, if present).</li>
+        <li>Pressing the enter key in the DeckBuilder's fields triggers a search.</li>
+        <li>Pressing the enter key in the DeckBuilder's cardlist triggers the JumboView.</li>
+      </ul>
+      <li>Fixed in 3.05</li>
+      <ul>
+        <li>Loading or duplicating empty decks would either cause an error, and/or leave the progress bar up indefinitely.</li>
+        <li>DeckBuilder choked when searching for -" or " without closing quotes.</li>
+        <li>DeckBuilder keyword searches couldn't find blank fields.</li>
+        <li>DeckBuilder regex buttons didn't change when "Reset" was clicked.</li>
+        <li>DeckBuilder's search results were reset when a deck's comment was selected.</li>
+        <li>After editing a card's text, an extraneous reprint was added to the DeckBuilder (it was harmless).</li>
+        <li>Counters didn't allow negative values.</li>
+      </ul>
+    </ul>
+
+    <li>3.04</li>
+    <ul>
+      <li>New in 3.04</li>
+      <ul>
+        <li>Images in the JumboView can be rotated and scaled.</li>
+        <li>User-defined backgrounds and colors (you can delete appearance.txt to revert).</li>
+      </ul>
+      <li>Fixed in 3.04</li>
+      <ul>
+        <li>Server-side network listening caused GUI to hang until a connection.</li>
+        <li>Client-side network connection attempts didn't time out.</li>
+        <li>Settings windows weren't centered.</li>
+        <li>Java 1.5 used a different theme than 1.4.</li>
+        <li>Previously when selecting multiple objects, you had to drag down/right.</li>
+        <li>3.03's source code wouldn't compile DeckListWindow; harmless to players.</li>
+        <li>There was a harmless array index error when the DeckBuilder turned up no matches.</li>
+      </ul>
+    </ul>
+
+    <li>3.03</li>
+    <ul>
+      <li>New in 3.03</li>
+      <ul>
+        <li>Socks proxy support.</li>
+        <li>Die roller now reports the individual rolls of multiple dice.</li>
+        <li>DeckBuilder regex searches no longer need (?s)(?m) for dotall/multiline matching.</li>
+      </ul>
+      <li>Fixed in 3.03</li>
+      <ul>
+        <li>Initial game dialog didn't work on java 1.5.</li>
+        <li>DeckBuilder was incredibly slow populating the cardlist on java 1.5.</li>
+        <li>Counter/die roller windows didn't report who used them in the chat.</li>
+        <li>After clicking a locked object, it would unlock.</li>
+        <li>Counter windows' value fields allowed non-numbers.</li>
+        <li>"Table Size" dialog allowed non-numbers (it still checked input though).</li>
+        <li>FloatingNote lock didn't apply to text editing.</li>
+        <li>DeckBuilder's Table button didn't work on cards lacking images unless a set was selected.</li>
+        <li>DeckBuilder's Table button sent new cards to opponents, but they didn't see text on JumboView (expansion info not converted).</li>
+        <li>DeckBuilder's "saved successfully" popup was titled "error".</li>
+      </ul>
+    </ul>
+
+    <li>3.02</li>
+    <ul>
+      <li>Fixed in 3.02</li>
+      <ul>
+        <li>DeckBuilder exported bad Apprentice decks with LF instead of CR-LF.</li>
+        <li>Card name tooltips still appeared even if drawn from a facedown deck (if faceup when decked).</li>
+      </ul>
+    </ul>
+
+    <li>3.01</li>
+    <ul>
+      <li>Fixed in 3.01</li>
+      <ul>
+        <li>FloatingNotes didn't stretch until an opponent dragged them.</li>
+        <li>Sometimes, the table window didn't maximize on startup properly.</li>
+      </ul>
+    </ul>
+
+    <li>3.00</li>
+    <ul>
+      <li>New in 3.00</li>
+      <ul>
+        <li>JavaCCG became ArcanistCCG (Java is a trademark of Sun Microsystems).</li>
+        <li>ArcanistCCG license changed to GPL.</li>
+        <li>A prompt appears at startup to choose a game.</li>
+        <li>JumboView text layouts can be edited/imported/exported with a GUI.</li>
+        <li>DeckBuilder can edit dat files (make backups before doing this).</li>
+        <li>DeckBuilder can import/export Apprentice's deck files (ascii .dec).</li>
+        <li>DeckBuilder searches are no longer case sensitive, and have two options (keyword/regex).</li>
+        <li>DeckBuilder has a color filter bar if using an Apprentice dat file.</li>
+        <li>DeckBuilder now prompts before overwriting.</li>
+        <li>DeckBuilder can copy search results to clipboard.</li>
+        <li>One can click in the DeckBuilder's reprint tree instead using of the Txt/Pic buttons.</li>
+        <li>One can double-click in the card list instead of using the Txt/Pic buttons.</li>
+        <li>Deck loading notices appear in chat.</li>
+        <li>Chat merged into JumboView.</li>
+        <li>JumboView can be set to only display text.</li>
+        <li>Objects are counted when grouped (e.g., 5 cards, 2 tokens, etc.).</li>
+        <li>Objects can be group-dragged (shift-drag makes a group now).</li>
+        <li>Holding shift when drawing (or DrawX) from a deck, will suppress autofacing.</li>
+        <li>Decks (on table) can be saved (kinda messy).</li>
+        <li>Cards and decks can be duplicated.</li>
+        <li>Cards now have "Remote Flip" (rather than "Local Flip"ing, then "Flip"ing).</li>
+        <li>FloatingNotes now update when they lose focus (no more pressing return).</li>
+        <li>Once connected to a server, both players' tables are cleared automatically.</li>
+        <li>Network sync errors are recoverable (IndexOutOfBounds).</li>
+        <li>Network port can be specified.</li>
+        <li>Readme.txt (finally).</li>
+      </ul>
+      <li>Fixed in 3.00</li>
+      <ul>
+        <li>Object removal caused sync problems.</li>
+        <li>Rotation hotspots didn't extend to card edges, rotating in tight stacks was difficult.</li>
+        <li>Dragging shifted objects' centers to mouse location (smoother now).</li>
+        <li>Tokens/FloatingNotes/shufflingDecks/listingDecks didn't have 'inUse' locks.</li>
+        <li>Locked decks allowed drawing.</li>
+        <li>When dragging a deck onto another deck, it unlocked AFTER disappearing, crashing.</li>
+        <li>Deck cardtotal tooltips didn't update often enough.</li>
+        <li>FaceUp/topVisible decks didn't use JumboView.</li>
+        <li>Setting 'addToBottom' on a deck didn't communicate over network.</li>
+        <li>Table window started out small and needed to be resized.</li>
+        <li>Table window moved to front whenever the mouse moved over a card/deck.</li>
+        <li>Table resize didn't communicate over network.</li>
+        <li>Counter/die roller windows didn't echo changes locally.</li>
+        <li>"Opponent Disconnected" message wasn't popping up within the main window.</li>
+        <li>Failed prefs loading if missing a dat file whose name ends with ".dat".</li>
+        <li>Deck loading progress window had a dead "Cancel" button.</li>
+        <li>Bad deck loading if deck file contained invalid frontFile entries.</li>
+        <li>When navigating the DeckBuilder's cardlist by typing it didn't scroll automatically.</li>
+        <li>In some games, DeckBuilder would skip search fields.</li>
+        <li>JumboView tooltips didn't occur over textareas.</li>
+        <li>JumboView appeared on the left and had to be moved out of the way.</li>
+        <li>Long text fields in JumboView covered others (field width now available in prefs.txt).</li>
+        <li>Land cards in Apprentice dats were loading as color -128.</li>
+        <li>In DeckBuilder, when a deck's card was selected, the cardlist was reset, even if that card was visible.</li>
+        <li>DeckBuilder crashed if deck files weren't properly formatted.</li>
+      </ul>
+    </ul>
+
+    <li>2.00</li>
+    <ul>
+      <li>New in 2.00</li>
+      <ul>
+        <li>Ability to remove demo cards! (delete Demo folder).</li>
+        <li>'Apply' button to GamePrefs window.</li>
+        <li>Opponent notification of dieroller and counter results.</li>
+        <li>One-click card rotation.</li>
+        <li>An 'inUse' state to cards and decks.</li>
+        <li>Text JumboView layout for double-sided cards.</li>
+        <li>Field popups to text JumboView layout.</li>
+        <li>Game-specific text JumboView layout.</li>
+        <li>Text to text-based cards on table.</li>
+        <li>Multiple-expansion support to text-based cards (differring reprints).</li>
+        <li>Card image cache.</li>
+        <li>DeckBuilder!.</li>
+        <li>Improved mapping of names from image to dat.</li>
+        <li>Support for a plain-text dat file format for easy maintenance.</li>
+        <li>More flexible format for deck files.</li>
+      </ul>
+      <li>Fixed in 2.00</li>
+      <ul>
+        <li>Minor relative path problems.</li>
+        <li>Lack of autofacing when using decklist.</li>
+        <li>Backward deckfile and decklist.</li>
+        <li>Uncentered table view on startup.</li>
+        <li>Unresponsive dierollers and counters (now on release, not click).</li>
+        <li>Offset/cropped card images when selected.</li>
+        <li>The 'double-faced' File>AddCard problem when using an absolute path.</li>
+        <li>Memory leaks related to the JumboView and card rotation.</li>
+        <li>Lack of repaint() after dealing with a deck's top card.</li>
+        <li>Misnamed color settings.</li>
+        <li>'Empty deck flips last card drawn' bug.</li>
+        <li>Pesky 'missing image' error when deckloading (now in dos window).</li>
+        <li>LotsAWindows problem by cosolidating into one window!.</li>
+        <li>Typo in Help (...same {time} as opponent...).</li>
+      </ul>
+    </ul>
+
+    <li>1.22b</li>
+    <ul>
+      <li>Fixed in 1.22b</li>
+      <ul>
+        <li>Removed necessity for Magic game by distributing a default back and cardinfo.dat.</li>
+        <li>Facedown cards no longer reveal their names upon hovering.</li>
+        <li>'paths' prefs checkbox saving (previously, it corrupted prefs.txt).</li>
+      </ul>
+    </ul>
+
+    <li>1.22a</li>
+    <ul>
+      <li>New in 1.22a</li>
+      <ul>
+        <li>File requesters generate relative paths, so NewCard is safe under NetPlay across platforms.</li>
+      </ul>
+      <li>Fixed in 1.22a</li>
+      <ul>
+        <li>Double-faced NewCard bug.</li>
+        <li>Deck size popup is now correct after combining decks.</li>
+        <li>Prefs file is consistant and relative now with Warlord using a Back\_Warlord.</li>
+      </ul>
+    </ul>
+
+    <li>1.22</li>
+    <ul>
+      <li>Fixed in 1.22</li>
+      <ul>
+        <li>'Paths' re-entry bug.</li>
+        <li>'Paths' save glitch which only saved applied settings rather than those in fields.</li>
+      </ul>
+    </ul>
+
+    <li>1.21</li>
+    <ul>
+      <li>New in 1.21</li>
+      <ul>
+        <li>Per-game savable settings.</li>
+        <li>'Use Text Only' option.</li>
+      </ul>
+      <li>Fixed in 1.21</li>
+      <ul>
+        <li>Text-based JumboView: now case insensitive when it looks up a cardname.</li>
+      </ul>
+    </ul>
+
+    <li>1.20</li>
+    <ul>
+      <li>New in 1.20</li>
+      <ul>
+        <li>File path preferences.</li>
+        <li>Apprentice cardinfo.dat parsing if lacking an image.</li>
+        <li>Card popups say the cards' names.</li>
+      </ul>
+      <li>Fixed in 1.20</li>
+      <ul>
+        <li>Deck loading: Missing cards were added as invisible members.</li>
+        <li>Deck loading: If a card was not found, there was no notification.</li>
+      </ul>
+    </ul>
+
+    <li>1.19</li>
+    <ul>
+      <li>New in 1.19</li>
+      <ul>
+        <li>'\# of cards' in deck hover info.</li>
+        <li>Deck:'Add to Bottom' setting for decked cards.</li>
+        <li>Deck reversal.</li>
+      </ul>
+      <li>Fixed in 1.19</li>
+      <ul>
+        <li>'Card Quality' settings bug.</li>
+        <li>'Clear Table' resets the object serial number counter.</li>
+      </ul>
+    </ul>
+  </ul>
+
+
+<!--
+  <div class="section-title" id=""></div>
+  <p></p>
+
+  <div class="subsection-title" id=""></div>
+  <p></p>
+
+    <li>...</li>
+    <ul>
+      <li>New in ...</li>
+      <ul>
+        <li></li>
+      </ul>
+      <li>Fixed in ...</li>
+      <ul>
+        <li></li>
+      </ul>
+    </ul>
+-->
+  </div></div>
+</body>
+</html>
